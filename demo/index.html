@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a11y-widget v2 Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7ff; color: #1a1a2e; }
+
+    header {
+      background: linear-gradient(135deg, #1A4A8A 0%, #0f2d5c 100%);
+      color: #fff; padding: 52px 24px 36px; text-align: center;
+    }
+    header h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; }
+    header p { margin-top: 12px; font-size: 1.05rem; opacity: .85; line-height: 1.6; }
+
+    .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+    .badge {
+      background: rgba(255,255,255,.15); border-radius: 20px;
+      padding: 4px 14px; font-size: .78rem; font-weight: 700;
+    }
+
+    main { max-width: 860px; margin: 48px auto; padding: 0 20px; }
+
+    h2 {
+      font-size: 1.2rem; font-weight: 800; color: #1A4A8A;
+      border-left: 4px solid #1A4A8A; padding-left: 12px;
+      margin-bottom: 16px;
+    }
+    section { margin-bottom: 52px; }
+    p { line-height: 1.75; color: #374151; }
+
+    .card {
+      background: #fff; border: 1.5px solid #e5e7eb;
+      border-radius: 12px; padding: 22px 24px; margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    }
+    .card h3 { font-size: 1rem; margin-bottom: 10px; color: #111; }
+
+    /* Instalação */
+    .embed { background: #0d1b2e; border-radius: 10px; padding: 20px 22px; }
+    .embed code { font-family: 'Fira Code', 'Consolas', monospace; font-size: .85rem; color: #7dd3fc; }
+    .embed .t  { color: #60a5fa; }
+    .embed .a  { color: #c084fc; }
+    .embed .v  { color: #86efac; }
+
+    /* Features grid */
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 12px; }
+    .feat {
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 16px; font-size: 13px;
+    }
+    .feat-ico { font-size: 1.4rem; margin-bottom: 8px; display: block; }
+    .feat strong { display: block; margin-bottom: 4px; font-size: .875rem; }
+    .feat span { color: #6b7280; line-height: 1.5; }
+
+    /* Animação de teste */
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .demo-anims { display: flex; align-items: center; gap: 28px; margin-top: 14px; flex-wrap: wrap; }
+    .anim-item { text-align: center; }
+    .anim-item span { font-size: 1.8rem; display: inline-block; }
+    .bounce { animation: bounce 1s ease infinite; }
+    .spin   { animation: spin   2s linear infinite; }
+    .pulse  { animation: pulse  1.5s ease infinite; }
+    .anim-item p { font-size: .75rem; color: #888; margin-top: 4px; }
+
+    /* Cores de teste */
+    .colors { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .swatch { width: 72px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+
+    /* Tipografia de teste */
+    .typo-sample { font-size: 1rem; line-height: 1.7; margin-top: 10px; }
+    .typo-sample a { color: #1A4A8A; }
+
+    /* API */
+    .api-code { background: #0d1b2e; color: #7dd3fc; border-radius: 8px; padding: 16px 20px; font-family: monospace; font-size: .83rem; line-height: 1.8; overflow-x: auto; }
+    .api-code .c { color: #64748b; }
+    .api-code .k { color: #c084fc; }
+    .api-code .s { color: #86efac; }
+
+    /* TTS */
+    .tts-sample {
+      background: #fffbe6; border: 1.5px dashed #d69e2e; border-radius: 8px;
+      padding: 16px; margin-top: 12px; font-size: 1rem; line-height: 1.75;
+      color: #4a3a00;
+    }
+
+    /* Video */
+    .video-wrap { margin-top: 12px; }
+    .video-wrap video { border-radius: 8px; max-width: 100%; }
+
+    /* Headings test */
+    .headings-test h1, .headings-test h2, .headings-test h3 { margin-bottom: 8px; }
+    .headings-test h1 { font-size: 1.4rem; }
+    .headings-test h2 { font-size: 1.2rem; }
+    .headings-test h3 { font-size: 1rem; }
+
+    /* Buttons */
+    .btn { display: inline-block; padding: 10px 20px; background: #1A4A8A; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .9rem; border: none; cursor: pointer; margin-right: 8px; margin-top: 8px; }
+    .btn:hover { background: #0f2d5c; }
+    .btn-sec { background: #fff; color: #1A4A8A; border: 2px solid #1A4A8A; }
+    .btn-sec:hover { background: #e8f0fe; }
+
+    footer { text-align: center; padding: 36px 20px; color: #6b7280; font-size: .875rem; border-top: 1px solid #e5e7eb; background: #fff; }
+    footer a { color: #1A4A8A; }
+
+    /* WCAG badge */
+    .wcag-badge { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #166534; border-radius: 6px; padding: 4px 12px; font-size: .8rem; font-weight: 700; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>♿ a11y-widget v2</h1>
+  <p>Widget de acessibilidade universal e gratuito.<br>
+     19 recursos. Adicione ao seu site com uma linha de código.</p>
+  <div class="badges">
+    <span class="badge">✅ Vanilla JS</span>
+    <span class="badge">✅ Zero dependências</span>
+    <span class="badge">✅ WCAG 2.2</span>
+    <span class="badge">✅ LBI 13.146/2015</span>
+    <span class="badge">✅ MIT License</span>
+    <span class="badge">⌨ Atalho: Alt+A</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- INSTALAÇÃO -->
+  <section>
+    <h2>Instalação (1 linha)</h2>
+    <div class="embed">
+      <code>
+        <span class="t">&lt;script</span>
+        <span class="a"> src=</span><span class="v">"https://cdn.jsdelivr.net/gh/thaynabds/a11y-widget@latest/src/a11y-widget.js"</span>
+        <span class="t">&gt;&lt;/script&gt;</span>
+      </code>
+    </div>
+    <p style="margin-top:12px;font-size:.9rem;color:#6b7280;">
+      Cole antes de <code>&lt;/body&gt;</code>. O botão aparece no canto inferior direito. Nenhuma configuração necessária. Preferências salvas no <code>localStorage</code> automaticamente.
+    </p>
+    <div class="wcag-badge">✅ Conformidade: WCAG 2.2 AA / LBI (Lei Brasileira de Inclusão 13.146/2015)</div>
+  </section>
+
+  <!-- FUNCIONALIDADES -->
+  <section>
+    <h2>19 funcionalidades incluídas</h2>
+    <div class="feat-grid">
+      <div class="feat"><span class="feat-ico">🌙</span><strong>Modo escuro</strong><span>Inverte cores preservando imagens e vídeos.</span></div>
+      <div class="feat"><span class="feat-ico">🔄</span><strong>Inverter cores</strong><span>Inversão pura de cores — alto contraste básico.</span></div>
+      <div class="feat"><span class="feat-ico">🔆</span><strong>Alto contraste</strong><span>Aumenta contraste 2.4x para baixa visão.</span></div>
+      <div class="feat"><span class="feat-ico">🌈</span><strong>Aumentar saturação</strong><span>Amplifica cores para visão de baixo contraste.</span></div>
+      <div class="feat"><span class="feat-ico">🖼</span><strong>Ocultar imagens</strong><span>Remove imagens para leitura de texto puro.</span></div>
+      <div class="feat"><span class="feat-ico">🎨</span><strong>Filtros daltonismo</strong><span>Protanopia, Deuteranopia, Tritanopia, Monocromia via SVG.</span></div>
+      <div class="feat"><span class="feat-ico">🔤</span><strong>Tamanho do texto</strong><span>80% a 140% em passos de 10%.</span></div>
+      <div class="feat"><span class="feat-ico">📖</span><strong>Fonte dislexia</strong><span>OpenDyslexic — melhora leitura para dislexia.</span></div>
+      <div class="feat"><span class="feat-ico">↕</span><strong>Altura de linha</strong><span>Line-height 2.2 para melhor escaneamento.</span></div>
+      <div class="feat"><span class="feat-ico">↔</span><strong>Espaçamento texto</strong><span>Letter e word spacing aumentados.</span></div>
+      <div class="feat"><span class="feat-ico">🔗</span><strong>Destacar links</strong><span>Links ficam visíveis em fundo amarelo.</span></div>
+      <div class="feat"><span class="feat-ico">📑</span><strong>Destacar títulos</strong><span>H1–H6 com borda lateral azul.</span></div>
+      <div class="feat"><span class="feat-ico">⏸</span><strong>Pausar animações</strong><span>Para todos os CSS transitions e animations.</span></div>
+      <div class="feat"><span class="feat-ico">🎬</span><strong>Pausar vídeos</strong><span>Pausa todos os &lt;video&gt; e desativa autoplay.</span></div>
+      <div class="feat"><span class="feat-ico">🖱</span><strong>Cursor grande</strong><span>Cursor SVG ampliado para visão motora reduzida.</span></div>
+      <div class="feat"><span class="feat-ico">🎯</span><strong>Foco de teclado</strong><span>Anel de foco amarelo sempre visível.</span></div>
+      <div class="feat"><span class="feat-ico">📏</span><strong>Guia de leitura</strong><span>Faixa horizontal que segue o cursor do mouse.</span></div>
+      <div class="feat"><span class="feat-ico">🔊</span><strong>Ler texto (TTS)</strong><span>Web Speech API — lê o texto selecionado em voz alta.</span></div>
+      <div class="feat"><span class="feat-ico">💾</span><strong>Persistência</strong><span>Tudo salvo no localStorage automaticamente.</span></div>
+    </div>
+  </section>
+
+  <!-- CONTEÚDO DE TESTE -->
+  <section>
+    <h2>Conteúdo para testar os recursos</h2>
+
+    <!-- Tipografia -->
+    <div class="card">
+      <h3>Tipografia e links</h3>
+      <div class="typo-sample">
+        <p>
+          O acesso à informação é um direito fundamental garantido pela
+          <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm" target="_blank">
+            Lei Brasileira de Inclusão (13.146/2015)
+          </a>.
+          Aplicações acessíveis ampliam o alcance do produto e impactam
+          positivamente a vida de pessoas com deficiências visuais, motoras ou cognitivas.
+        </p>
+        <p style="margin-top:12px">
+          According to the
+          <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank">W3C WCAG 2.2</a>
+          guidelines, accessible web content benefits not only users with disabilities
+          but all users in varied contexts.
+        </p>
+      </div>
+      <p style="margin-top:12px;font-size:.85rem;color:#888;">
+        Teste: ative <strong>Destacar links</strong>, <strong>Fonte dislexia</strong>,
+        <strong>Aumentar altura de linha</strong> e <strong>Espaçamento de texto</strong>.
+      </p>
+    </div>
+
+    <!-- Títulos -->
+    <div class="card">
+      <h3>Hierarquia de títulos</h3>
+      <div class="headings-test">
+        <h1>Título H1 — título principal da página</h1>
+        <h2>Título H2 — seção principal</h2>
+        <h3>Título H3 — subseção</h3>
+      </div>
+      <p style="margin-top:12px;font-size:.85rem;color:#888;">
+        Teste: ative <strong>Destacar títulos</strong>.
+      </p>
+    </div>
+
+    <!-- Animações -->
+    <div class="card">
+      <h3>Animações CSS</h3>
+      <div class="demo-anims">
+        <div class="anim-item"><span class="bounce" aria-hidden="true">🔵</span><p>Bounce</p></div>
+        <div class="anim-item"><span class="spin"   aria-hidden="true">⚙</span><p>Spin</p></div>
+        <div class="anim-item"><span class="pulse"  aria-hidden="true">❤</span><p>Pulse</p></div>
+      </div>
+      <p style="margin-top:14px;font-size:.85rem;color:#888;">
+        Teste: ative <strong>Pausar animações</strong>.
+      </p>
+    </div>
+
+    <!-- Vídeo -->
+    <div class="card">
+      <h3>Vídeo com autoplay</h3>
+      <div class="video-wrap">
+        <video width="400" autoplay loop muted playsinline
+               style="max-width:100%; border-radius:8px; background:#000;"
+               aria-label="Vídeo de exemplo">
+          <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+          Seu navegador não suporta o elemento video.
+        </video>
+      </div>
+      <p style="margin-top:10px;font-size:.85rem;color:#888;">
+        Teste: ative <strong>Pausar vídeos</strong>.
+      </p>
+    </div>
+
+    <!-- Cores daltonismo -->
+    <div class="card">
+      <h3>Paleta de cores (teste de daltonismo)</h3>
+      <p style="font-size:.875rem;color:#555;margin-bottom:2px;">
+        Semáforo: as cores devem permanecer distinguíveis com cada filtro ativado.
+      </p>
+      <div class="colors">
+        <div class="swatch" style="background:#e53e3e;">Vermelho</div>
+        <div class="swatch" style="background:#38a169;">Verde</div>
+        <div class="swatch" style="background:#3182ce;">Azul</div>
+        <div class="swatch" style="background:#d69e2e;">Amarelo</div>
+        <div class="swatch" style="background:#805ad5;">Roxo</div>
+        <div class="swatch" style="background:#dd6b20;">Laranja</div>
+        <div class="swatch" style="background:#00b5d8;">Ciano</div>
+      </div>
+    </div>
+
+    <!-- TTS -->
+    <div class="card">
+      <h3>Leitura em voz alta (TTS)</h3>
+      <p style="font-size:.875rem;color:#555;">
+        Selecione o texto abaixo com o mouse e clique em <strong>"Ler texto selecionado"</strong> no widget:
+      </p>
+      <div class="tts-sample">
+        "A acessibilidade digital não é um diferencial, é um direito. Cada pessoa merece
+        acessar informações de forma autônoma e independente, independentemente de suas
+        condições físicas, sensoriais ou cognitivas."
+      </div>
+    </div>
+
+    <!-- Guia de leitura -->
+    <div class="card">
+      <h3>Guia de leitura</h3>
+      <p style="font-size:.875rem;color:#555;">
+        Ative <strong>Guia de leitura</strong> no widget e mova o mouse sobre este parágrafo.
+        Uma faixa horizontal acompanhará seu cursor, ajudando a manter o foco na linha que está lendo.
+        Recurso útil para pessoas com dislexia, déficit de atenção (TDAH) ou fadiga ocular.
+      </p>
+    </div>
+
+    <!-- Botões para navegação por teclado -->
+    <div class="card">
+      <h3>Navegação por teclado</h3>
+      <p style="font-size:.875rem;color:#555;margin-bottom:12px;">
+        Ative <strong>Destacar foco do teclado</strong> e navegue com a tecla Tab:
+      </p>
+      <button class="btn" onclick="return false">Botão primário</button>
+      <button class="btn btn-sec" onclick="return false">Botão secundário</button>
+      <a href="#" class="btn" onclick="return false" style="text-decoration:none">Link como botão</a>
+      <br>
+      <input type="text" placeholder="Campo de texto para testar foco"
+             style="margin-top:12px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:6px;font-size:.9rem;width:100%;max-width:320px;">
+    </div>
+
+    <!-- Imagens -->
+    <div class="card">
+      <h3>Imagens</h3>
+      <p style="font-size:.875rem;color:#555;margin-bottom:12px;">
+        Ative <strong>Ocultar imagens</strong> para esconder as imagens abaixo e focar no texto.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <img src="https://picsum.photos/seed/a11y1/200/120" alt="Imagem de exemplo 1" style="border-radius:8px;max-width:200px;">
+        <img src="https://picsum.photos/seed/a11y2/200/120" alt="Imagem de exemplo 2" style="border-radius:8px;max-width:200px;">
+      </div>
+    </div>
+
+  </section>
+
+  <!-- API -->
+  <section>
+    <h2>API JavaScript</h2>
+    <div class="api-code">
+      <span class="c">// Ler preferências atuais</span><br>
+      <span class="k">const</span> prefs = window.A11yWidget.getPrefs();<br><br>
+      <span class="c">// Aplicar preferências (ex: carregar do servidor)</span><br>
+      window.A11yWidget.applyPrefs({ darkMode: <span class="k">true</span>, fontSize: <span class="k">2</span> });<br><br>
+      <span class="c">// Falar um texto programaticamente</span><br>
+      window.A11yWidget.speak(<span class="s">'Bem-vindo ao nosso site!'</span>);<br><br>
+      <span class="c">// Abrir ou fechar o painel</span><br>
+      window.A11yWidget.open();<br>
+      window.A11yWidget.close();<br><br>
+      <span class="c">// Resetar tudo</span><br>
+      window.A11yWidget.reset();
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Feito por <a href="https://github.com/thaynabds">Thayná Batista da Silva</a> ·
+  <a href="https://github.com/thaynabds/a11y-widget">GitHub</a> ·
+  MIT License · WCAG 2.2 / LBI 13.146/2015
+</footer>
+
+<script src="../src/a11y-widget.js"></script>
+
+</body>
+</html>
