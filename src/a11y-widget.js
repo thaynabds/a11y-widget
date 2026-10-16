@@ -88,12 +88,14 @@
       z-index: var(--aw-z);
       width: 54px; height: 54px; border-radius: 50%;
       background: var(--aw-primary); color: #fff;
-      border: none; cursor: pointer;
+      border: none; cursor: grab;
       box-shadow: 0 4px 20px var(--aw-shadow);
       display: flex; align-items: center; justify-content: center;
       transition: transform .2s, box-shadow .2s;
       outline: none;
+      touch-action: none;
     }
+    #a11y-btn:active { cursor: grabbing; }
     #a11y-btn:focus-visible { outline: 3px solid #ffcc00; outline-offset: 3px; }
     #a11y-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px var(--aw-shadow); }
     #a11y-btn[aria-expanded="true"] { background: var(--aw-primary-dark); }
@@ -664,8 +666,107 @@
     syncUI();
   }
 
-  // ─── Atalho de teclado global Alt+A ───────────────────────────────────────
-  function bindKeyShortcut() {
+  // ─── Botão arrastável ──────────────────────────────────────────────────────
+  const DRAG_KEY = 'a11y-widget-pos';
+
+  function saveBtnPos(bottom, right) {
+    try { localStorage.setItem(DRAG_KEY, JSON.stringify({ bottom, right })); }
+    catch (_) {}
+  }
+
+  function loadBtnPos() {
+    try { return JSON.parse(localStorage.getItem(DRAG_KEY) || 'null'); }
+    catch (_) { return null; }
+  }
+
+  function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
+
+  function initDraggable() {
+    const btn   = document.getElementById('a11y-btn');
+    const panel = document.getElementById('a11y-panel');
+    let isDragging = false;
+    let moved = false;
+    let startX, startY, startRight, startBottom;
+
+    // Restaura posição salva
+    const saved = loadBtnPos();
+    if (saved) {
+      btn.style.bottom = saved.bottom + 'px';
+      btn.style.right  = saved.right  + 'px';
+      btn.style.top    = 'auto';
+      btn.style.left   = 'auto';
+    }
+
+    function getPos(e) {
+      return e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                       : { x: e.clientX, y: e.clientY };
+    }
+
+    function onStart(e) {
+      // Ignora cliques nos botões internos do painel
+      if (e.target !== btn && !btn.contains(e.target)) return;
+      const { x, y } = getPos(e);
+      startX = x;
+      startY = y;
+      const rect = btn.getBoundingClientRect();
+      startRight  = window.innerWidth  - rect.right;
+      startBottom = window.innerHeight - rect.bottom;
+      isDragging = true;
+      moved = false;
+      btn.style.transition = 'none';
+      e.preventDefault();
+    }
+
+    function onMove(e) {
+      if (!isDragging) return;
+      const { x, y } = getPos(e);
+      const dx = x - startX;
+      const dy = y - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+      if (!moved) return;
+
+      const BW = btn.offsetWidth;
+      const BH = btn.offsetHeight;
+      const newRight  = clamp(startRight  - dx, 8, window.innerWidth  - BW - 8);
+      const newBottom = clamp(startBottom + dy, 8, window.innerHeight - BH - 8);
+
+      btn.style.right  = newRight  + 'px';
+      btn.style.bottom = newBottom + 'px';
+      btn.style.top    = 'auto';
+      btn.style.left   = 'auto';
+
+      // Reposiciona painel junto ao botão
+      const GAP = 12;
+      panel.style.right  = newRight + 'px';
+      panel.style.bottom = (newBottom + BH + GAP) + 'px';
+      panel.style.top    = 'auto';
+      panel.style.left   = 'auto';
+    }
+
+    function onEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      btn.style.transition = '';
+
+      if (moved) {
+        saveBtnPos(
+          parseFloat(btn.style.bottom),
+          parseFloat(btn.style.right)
+        );
+        // Impede que o click abra o painel após arrastar
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      moved = false;
+    }
+
+    btn.addEventListener('mousedown',  onStart, { passive: false });
+    btn.addEventListener('touchstart', onStart, { passive: false });
+    document.addEventListener('mousemove',  onMove);
+    document.addEventListener('touchmove',  onMove, { passive: false });
+    document.addEventListener('mouseup',  onEnd);
+    document.addEventListener('touchend', onEnd);
+  }
     document.addEventListener('keydown', function (e) {
       if (e.altKey && e.key === 'a') {
         e.preventDefault();
@@ -760,7 +861,7 @@
 
   // ─── Init ──────────────────────────────────────────────────────────────────
   function init() {
-    if (document.getElementById(WIDGET_ID)) return; // evita dupla inicialização
+    if (document.getElementById(WIDGET_ID)) return;
     injectStyle();
     injectHTML();
     applyAll();
@@ -768,7 +869,8 @@
     bindEvents();
     initReadingGuide();
     bindKeyShortcut();
-    console.info('[a11y-widget v2.0] pronto. Atalho: Alt+A');
+    initDraggable();
+    console.info('[a11y-widget v2.0] pronto. Atalho: Alt+A | Arraste o botão para reposicionar.');
   }
 
   if (document.readyState === 'loading') {
