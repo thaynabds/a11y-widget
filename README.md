@@ -4,7 +4,7 @@ Widget de acessibilidade universal para web. Adicione ao seu site com **uma linh
 
 [![jsDelivr CDN](https://img.shields.io/badge/CDN-jsDelivr-orange)](https://www.jsdelivr.com/package/gh/thaynabds/a11y-widget)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
-[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-brightgreen)](https://thaynabds.github.io/a11y-widget/demo/)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-brightgreen)](https://thaynabds.github.io/a11y-widget/)
 [![WCAG 2.2](https://img.shields.io/badge/WCAG-2.2%20AA-green)](https://www.w3.org/WAI/WCAG22/quickref/)
 [![LBI](https://img.shields.io/badge/LBI-13.146%2F2015-blue)](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm)
 
@@ -12,7 +12,7 @@ Widget de acessibilidade universal para web. Adicione ao seu site com **uma linh
 
 ## Demo ao vivo
 
-**[thaynabds.github.io/a11y-widget/demo](https://thaynabds.github.io/a11y-widget/demo/)**
+**[thaynabds.github.io/a11y-widget](https://thaynabds.github.io/a11y-widget/)**
 
 ---
 
